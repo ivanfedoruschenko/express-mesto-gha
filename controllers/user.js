@@ -25,15 +25,17 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.id)
-    .orFail(() => {
-      res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' });
-    })
+    .orFail(() => new Error('Not Found'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE).send({ message: 'Введенные данные неккоректны' });
+        res.status(ERROR_CODE).send({
+          message: 'Переданы некорректные данные',
+        });
+      } else if (err.message === 'Not Found') {
+        res.status(ERROR_NOT_FOUND).send({ message: 'ПОльзователь не найден' });
       } else {
-        res.status(ERROR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+        res.status(ERROR_DEFAULT).send({ message: 'Неизвестная ошибка' });
       }
     });
 };

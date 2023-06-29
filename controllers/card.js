@@ -29,17 +29,18 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCards = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => {
-      res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-    })
+    .orFail(() => new Error('Not Found'))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(ERROR_CODE).send({
           message: 'Переданы некорректные данные',
         });
+      } else if (err.message === 'Not Found') {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Переданные данные некорректны' });
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: 'Неизвестная ошибка' });
       }
-      res.status(ERROR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
     });
 };
 
@@ -49,17 +50,18 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .orFail(() => {
-      res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-    })
+    .orFail(() => new Error('Not Found'))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(ERROR_CODE).send({
           message: 'Переданы некорректные данные',
         });
+      } else if (err.message === 'Not Found') {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Переданные данные некорректны' });
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: 'Неизвестная ошибка' });
       }
-      res.status(ERROR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
     });
 };
 
@@ -69,16 +71,17 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .orFail(() => {
-      res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-    })
+    .orFail(() => new Error('Not Found'))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(ERROR_CODE).send({
           message: 'Переданы некорректные данные',
         });
+      } else if (err.message === 'Not Found') {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Переданные данные некорректны' });
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: 'Неизвестная ошибка' });
       }
-      res.status(ERROR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
     });
 };
