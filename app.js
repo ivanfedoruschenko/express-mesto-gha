@@ -6,7 +6,6 @@ const PORT = 3000;
 
 const userRouter = require('./routes/user');
 const cardRouter = require('./routes/card');
-const { ERROR_NOT_FOUND } = require('./errors/errors');
 
 const app = express();
 
@@ -22,10 +21,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(express.json());
-
-app.use('/', (req, res) => {
-  res.status(ERROR_NOT_FOUND).send({ message: 'Что-то пошло не так...' });
-});
 
 app.use('/users', userRouter);
 
