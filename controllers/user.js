@@ -24,7 +24,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params.id)
+  User.findById(req.params.userId)
     .orFail(() => new Error('Not Found'))
     .then((user) => res.send(user))
     .catch((err) => {
@@ -41,7 +41,10 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.updateUser = (req, res) => {
-  User.findByIdAndUpdate(req.params.id, { name: req.body.name, about: req.body.about })
+  const { name, about } = req.body;
+  const { _id } = req.user;
+
+  User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -53,7 +56,9 @@ module.exports.updateUser = (req, res) => {
 };
 
 module.exports.updateAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.params.id, { avatar: req.body.avatar })
+  const { avatar } = req.body;
+  const { _id } = req.user;
+  User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
