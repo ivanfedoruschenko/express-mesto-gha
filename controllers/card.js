@@ -2,16 +2,11 @@ const Card = require('../models/card');
 const { ERROR_DEFAULT, ERROR_CODE, ERROR_NOT_FOUND } = require('../errors/errors');
 
 module.exports.createCard = (req, res) => {
-  const {
-    name, link,
-  } = req.body;
+  const { _id } = req.user;
+  const { name, link } = req.body;
 
-  Card.create({
-    name, link, owner: req.user._id,
-  })
-    .then((card) => {
-      res.send(card);
-    })
+  Card.create({ name, link, owner: _id })
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_CODE).send({ message: 'Введенные данные неккоректны' });
