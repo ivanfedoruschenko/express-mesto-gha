@@ -32,7 +32,7 @@ module.exports.deleteCards = (req, res) => {
           message: 'Переданы некорректные данные',
         });
       } else if (err.message === 'Not Found') {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Переданные данные некорректны' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Документ не найден' });
       } else {
         res.status(ERROR_DEFAULT).send({ message: 'Неизвестная ошибка' });
       }
@@ -53,7 +53,7 @@ module.exports.likeCard = (req, res) => {
           message: 'Переданы некорректные данные',
         });
       } else if (err.message === 'Not Found') {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Переданные данные некорректны' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Документ не найден' });
       } else {
         res.status(ERROR_DEFAULT).send({ message: 'Неизвестная ошибка' });
       }
@@ -74,7 +74,7 @@ module.exports.dislikeCard = (req, res) => {
           message: 'Переданы некорректные данные',
         });
       } else if (err.message === 'Not Found') {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Переданные данные некорректны' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Документ не найден' });
       } else {
         res.status(ERROR_DEFAULT).send({ message: 'Неизвестная ошибка' });
       }
