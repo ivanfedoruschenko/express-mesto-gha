@@ -1,42 +1,57 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+const bcrypt = require('bcryptjs');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { ERROR_DEFAULT, ERROR_CODE, ERROR_NOT_FOUND } = require('../errors/errors');
+const CodeError = require('../errors/error-code');
+const ConflictValueError = require('../errors/error-conflict-value');
+const NotFoundError = require('../errors/error-not-found');
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: 'Введенные данные неккоректны' });
-      } else {
-        res.status(ERROR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
-      }
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({
+        name, about, avatar, email, password: hash,
+      })
+        .then((user) => {
+          res.send(user);
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new CodeError('Введенные данные неккоректны'));
+            return;
+          } if (err.code === 11000) {
+            next(new ConflictValueError('При регистрации указан email, который уже существует'));
+          } next(err);
+        });
     });
 };
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' }));
+    .catch(next);
 };
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .orFail(() => new Error('Not Found'))
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE).send({
-          message: 'Переданы некорректные данные',
-        });
-      } else if (err.message === 'Not Found') {
-        res.status(ERROR_NOT_FOUND).send({ message: 'ПОльзователь не найден' });
-      } else {
-        res.status(ERROR_DEFAULT).send({ message: 'Неизвестная ошибка' });
+        next(new CodeError('Переданы некорректные данные'));
+        return;
       }
+      next(err);
     });
 };
 
@@ -48,10 +63,9 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: 'Введенные данные неккоректны' });
-      } else {
-        res.status(ERROR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
-      }
+        next(new CodeError('Введенные данные неккоректны'));
+        return;
+      } next(err);
     });
 };
 
@@ -62,9 +76,37 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: 'Введенные данные неккоректны' });
-      } else {
-        res.status(ERROR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+        next(new CodeError('Введенные данные неккоректны'));
+        return;
       }
+      next(err);
     });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      if (user) {
+        const token = jwt.sign(
+          { _id: user._id },
+          'some-key',
+          { expiresIn: '7d' },
+        );
+        res.send({ token });
+      } else {
+        throw new NotFoundError('Передан неверный логин или пароль');
+      }
+    })
+    .catch(next);
+};
+
+module.exports.getCurrenUser = (req, res) => {
+  User.findOne(req.user.email).select('+password')
+    .orFail(new NotFoundError('Пользователь не найден'))
+    .then((user) => {
+      res.send(user);
+    })
+    .catch(next);
 };
