@@ -7,7 +7,7 @@ const CodeError = require('../errors/error-code');
 const ConflictValueError = require('../errors/error-conflict-value');
 const NotFoundError = require('../errors/error-not-found');
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -31,13 +31,13 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => new Error('Not Found'))
     .then((user) => {
@@ -55,7 +55,7 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   const { _id } = req.user;
 
@@ -69,7 +69,7 @@ module.exports.updateUser = (req, res) => {
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const { _id } = req.user;
   User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
@@ -83,7 +83,7 @@ module.exports.updateAvatar = (req, res) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -102,7 +102,7 @@ module.exports.login = (req, res) => {
     .catch(next);
 };
 
-module.exports.getCurrenUser = (req, res) => {
+module.exports.getCurrenUser = (req, res, next) => {
   User.findOne(req.user.email).select('+password')
     .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
