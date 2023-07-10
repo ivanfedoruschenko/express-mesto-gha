@@ -26,9 +26,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: {
-      validator(v) {
-        return validator.isEmail(v);
-      },
+      validator(v) { validator.isEmail(v); },
       message: 'Введен некорректный email',
     },
   },

@@ -26,6 +26,7 @@ module.exports.createUser = (req, res, next) => {
             return;
           } if (err.code === 11000) {
             next(new ConflictValueError('При регистрации указан email, который уже существует'));
+            return;
           } next(err);
         });
     });

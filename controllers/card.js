@@ -12,9 +12,9 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new CodeError('Переданные данные некорректны'));
-      } else {
-        next(err);
+        return;
       }
+      next(err);
     });
 };
 
