@@ -106,11 +106,9 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getCurrenUser = (req, res, next) => {
-  User.findOne(req.user.email).select('+password')
+  User.findOne(req.user.email)
     .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
-      // eslint-disable-next-line no-param-reassign
-      delete user.password;
       res.send(user);
     })
     .catch(next);
