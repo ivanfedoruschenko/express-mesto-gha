@@ -14,9 +14,9 @@ const {
   validationUpdateAvatar,
 } = require('../utils/validation');
 
-router.get('/me', getCurrenUser);
-
 router.get('/', getUsers);
+
+router.get('/me', getCurrenUser);
 
 router.get('/:userId', validationGetUserById, getUserById);
 
