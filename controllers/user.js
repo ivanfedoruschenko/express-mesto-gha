@@ -6,7 +6,6 @@ const User = require('../models/user');
 const CodeError = require('../errors/error-code');
 const ConflictValueError = require('../errors/error-conflict-value');
 const NotFoundError = require('../errors/error-not-found');
-const IncorrectToken = require('../errors/error_incorrect_token');
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -90,20 +89,18 @@ module.exports.updateAvatar = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findOne({ email })
-    .select('+password')
-    .orFail(new IncorrectToken('Неправильные почта или пароль'))
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (matched) {
-            const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
-            res.send({ token });
-          } else {
-            throw new IncorrectToken('Неправильные почта или пароль');
-          }
-        })
-        .catch(next);
+      if (user) {
+        const token = jwt.sign(
+          { _id: user._id },
+          'some-key',
+          { expiresIn: '7d' },
+        );
+        res.send({ token });
+      } else {
+        throw new NotFoundError('Передан неверный логин или пароль');
+      }
     })
     .catch(next);
 };
