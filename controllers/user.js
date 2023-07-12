@@ -90,19 +90,20 @@ module.exports.updateAvatar = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
-    .orFail(new IncorrectToken('Передан неверный логин или пароль'))
+  return User.findOne({ email })
+    .select('+password')
+    .orFail(new IncorrectToken('Неправильные почта или пароль'))
     .then((user) => {
-      if (user) {
-        const token = jwt.sign(
-          { _id: user._id },
-          'some-key',
-          { expiresIn: '7d' },
-        );
-        res.send({ token });
-      } else {
-        throw new IncorrectToken('Передан неверный логин или пароль');
-      }
+      bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (matched) {
+            const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
+            res.send({ token });
+          } else {
+            throw new IncorrectToken('Неправильные почта или пароль');
+          }
+        })
+        .catch(next);
     })
     .catch(next);
 };
