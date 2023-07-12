@@ -9,9 +9,11 @@ const NotFoundError = require('../errors/error-not-found');
 router.post('/signin', validationLogin, login);
 router.post('/signup', validationCreateUser, createUser);
 
+router.use(auth);
+
 router.use('/users', userRoutes);
 router.use('/cards', cardRoutes);
-router.use('*', (reg, res) => {
+router.use('*', (reg, res, next) => {
   next(new NotFoundError('Неправильный адрес'));
 });
 
