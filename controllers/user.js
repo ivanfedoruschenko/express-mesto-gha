@@ -109,9 +109,7 @@ module.exports.getCurrenUser = (req, res, next) => {
   User.findOne(req.user.email).select('+password')
     .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
-      res.send({
-        name: user.name, about: user.about, avatar: user.avatar, email: user.email,
-      });
+      res.send(user);
     })
     .catch(next);
 };
