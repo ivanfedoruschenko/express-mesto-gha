@@ -1,4 +1,4 @@
-const ERROR_CODE = require('./errors');
+const { ERROR_CODE } = require('./errors');
 
 class CodeError extends Error {
   constructor(message) {

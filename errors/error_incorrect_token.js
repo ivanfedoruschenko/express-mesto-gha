@@ -1,4 +1,4 @@
-const ERROR_INCORRECT_TOKEN = require('./errors');
+const { ERROR_INCORRECT_TOKEN } = require('./errors');
 
 class IncorrectTokenError extends Error {
   constructor(message) {

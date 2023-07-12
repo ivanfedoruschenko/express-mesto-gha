@@ -1,9 +1,16 @@
-const ERROR_DEFAULT = require('../errors/errors');
+const { ERROR_DEFAULT } = require('../errors/errors');
 
 const centralError = (err, req, res, next) => {
-  const { statusCode = ERROR_DEFAULT } = err;
-  const message = statusCode === ERROR_DEFAULT ? 'На сервере произошла ошибка' : err.message;
-  res.status(statusCode).send({ message });
+  const { statusCode = ERROR_DEFAULT, message } = err;
+  console.log(err);
+  res
+    .status(statusCode)
+    .send({
+      // проверяем статус и выставляем сообщение в зависимости от него
+      message: statusCode === ERROR_DEFAULT
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
   next();
 };
 

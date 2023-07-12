@@ -45,18 +45,17 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .orFail(() => new Error('Not Found'))
+    .orFail(() => new NotFoundError('Карточка не найдена'))
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточка не найдена');
-      } else {
+      if (card) {
         res.send(card);
+      } else {
+        throw new NotFoundError('Карточка не найдена');
       }
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         next(new CodeError('Переданы некорректные данные'));
-        return;
       } next(err);
     });
 };
@@ -67,7 +66,6 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new NotFoundError('Картчока не найдена'))
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
@@ -76,7 +74,7 @@ module.exports.dislikeCard = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         next(new CodeError('Переданы некорректные данные'));
         return;
       } next(err);
