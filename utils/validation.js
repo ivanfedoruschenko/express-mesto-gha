@@ -4,7 +4,7 @@ const regex = /^(http|https):\/\/(www\.)?[a-zA-Z0-9\-\._~:\/?#[\]@!\$&'\(\)\*\+,
 
 const validationGetUserById = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().length(24).required(),
+    userId: Joi.string().length(24).hex().required(),
   }),
 });
 
@@ -47,7 +47,7 @@ const validationCreateCard = celebrate({
 
 const validationDeleteCard = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24).required(),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 });
 
@@ -59,7 +59,7 @@ const validationDislikeCard = celebrate({
 
 const validationLikeCard = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24).required(),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 });
 

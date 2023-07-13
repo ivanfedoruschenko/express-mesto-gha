@@ -28,7 +28,6 @@ module.exports.deleteCards = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => new NotFoundError('Карточка не найдена'))
     .then((card) => {
-      if (!card) { throw new NotFoundError('Карточка не найдена'); }
       if (req.user._id !== card.owner.toString()) {
         throw new ForbiddenRequestError('Запрещено удалять чужие карточки');
       }
@@ -56,6 +55,7 @@ module.exports.likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new CodeError('Переданы некорректные данные'));
+        return;
       } next(err);
     });
 };
