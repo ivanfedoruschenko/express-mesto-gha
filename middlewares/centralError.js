@@ -2,7 +2,6 @@ const { ERROR_DEFAULT } = require('../errors/errors');
 
 const centralError = (err, req, res, next) => {
   const { statusCode = ERROR_DEFAULT, message } = err;
-  console.log(err);
   res
     .status(statusCode)
     .send({

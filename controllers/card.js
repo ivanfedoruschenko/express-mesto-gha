@@ -53,7 +53,7 @@ module.exports.likeCard = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         next(new CodeError('Переданы некорректные данные'));
         return;
       } next(err);
@@ -74,7 +74,7 @@ module.exports.dislikeCard = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         next(new CodeError('Переданы некорректные данные'));
         return;
       } next(err);

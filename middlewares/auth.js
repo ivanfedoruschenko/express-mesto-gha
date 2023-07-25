@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require('jsonwebtoken');
 const ERROR_INCORRECT_TOKEN = require('../errors/error_incorrect_token');
+const { SECRET_STRING } = require('../utils/config');
 
 // eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
@@ -14,7 +15,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'some-key');
+    payload = jwt.verify(token, SECRET_STRING);
   } catch (err) {
     next(new ERROR_INCORRECT_TOKEN('Необходима авторизация '));
     return;

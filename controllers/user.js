@@ -6,6 +6,7 @@ const User = require('../models/user');
 const CodeError = require('../errors/error-code');
 const ConflictValueError = require('../errors/error-conflict-value');
 const NotFoundError = require('../errors/error-not-found');
+const { SECRET_STRING } = require('../utils/config');
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -93,7 +94,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'some-key',
+        SECRET_STRING,
         { expiresIn: '7d' },
       );
       res.send({ token });
