@@ -1,7 +1,9 @@
 const express = require('express');
+require('dotenv').config();
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { errors } = require('celebrate');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { SERVER_PORT, DB } = require('./utils/config');
@@ -11,6 +13,8 @@ const router = require('./routes');
 
 const app = express();
 const centralError = require('./middlewares/centralError');
+
+app.use(cors());
 
 mongoose.connect(DB, {
   family: 4,
