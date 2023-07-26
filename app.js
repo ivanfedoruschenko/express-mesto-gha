@@ -14,11 +14,11 @@ const router = require('./routes');
 const app = express();
 const centralError = require('./middlewares/centralError');
 
-app.use(cors());
-
 mongoose.connect(DB, {
   family: 4,
 });
+
+app.use(cors());
 
 app.use(express.json());
 

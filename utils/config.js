@@ -18,7 +18,6 @@ const SERVER_PORT = NODE_ENV === 'production'
 const SECRET_STRING = NODE_ENV === 'production'
 && JWT_SECRET ? JWT_SECRET : DEV_SECRET;
 
-// выдаем наружу то что требуется
 module.exports = {
   DB,
   SERVER_PORT,
