@@ -8,20 +8,17 @@ const { errors } = require('celebrate');
 const mongoose = require('mongoose');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { SERVER_PORT, DB } = require('./utils/config');
+const centralError = require('./middlewares/centralError');
 
 const PORT = SERVER_PORT;
 const router = require('./routes');
 
 const app = express();
-const centralError = require('./middlewares/centralError');
+
+app.use(cors());
 
 mongoose.connect(DB, {
   family: 4,
-});
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  next();
 });
 
 app.use(express.json());
