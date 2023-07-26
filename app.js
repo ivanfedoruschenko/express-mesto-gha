@@ -1,9 +1,10 @@
-const express = require('express');
 require('dotenv').config();
+
+const express = require('express');
+const cors = require('cors');
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { errors } = require('celebrate');
-const cors = require('cors');
 const mongoose = require('mongoose');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { SERVER_PORT, DB } = require('./utils/config');
