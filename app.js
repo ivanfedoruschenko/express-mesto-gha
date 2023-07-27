@@ -7,10 +7,11 @@ const cors = require('cors');
 const { errors } = require('celebrate');
 const mongoose = require('mongoose');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { SERVER_PORT, DB } = require('./utils/config');
+const { DB } = require('./utils/config');
 const centralError = require('./middlewares/centralError');
 
-const PORT = SERVER_PORT;
+const PORT = 3000;
+
 const router = require('./routes');
 
 const app = express();
